@@ -1,4 +1,5 @@
 const mongoose = require("mongoose");
+const bcrypt = require("bcrypt");
 
 const userSchema = new mongoose.Schema({
   email: {
@@ -14,14 +15,16 @@ const userSchema = new mongoose.Schema({
 
 //This post doesn't refers to post requests. It refers to specific event occured in userSchema and call this function after that event.
 //first argument action perfermed and second is a function. That function will be fired when
-userSchema.post("save", function (doc, next) {
-  console.log("new user created", doc);
-  next();
-});
+// userSchema.post("save", function (doc, next) {
+//   console.log("new user created", doc);
+//   next();
+// });
 
 //before an action is saved in db
-userSchema.pre("save", function (next) {
+userSchema.pre("save", async function (next) {
   console.log("user about to be created", this);
+  const salt = await bcrypt.genSalt();
+  this.password = await bcrypt.hash(this.password, salt);
   next();
 });
 

@@ -20,17 +20,25 @@ module.exports.login_get = (req, res) => {
 
 module.exports.signup_post = async (req, res) => {
   const { error, value } = validateSignup(req.body);
-
+  console.log("testing1");
   if (error) {
+    console.log("testing2");
+
     return res.status(400).json({ error: error.message });
   } else {
     const { email, password } = value;
     try {
+      console.log(email, password);
+      console.log("testing 3");
       const user = await User.create({ email, password });
+      console.log("testing4");
+
       res.status(201).json(user);
     } catch (error) {
       const errors = handleErrors(error);
-      res.status(errors.code).json({ errors });
+      console.log("testing 5");
+      console.log(error);
+      res.status(400).json({ errors });
     }
   }
 };
