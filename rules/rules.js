@@ -5,7 +5,7 @@ const validator = (schema) => (payload) =>
 
 const signupSchema = Joi.object({
   email: Joi.string().email().required(),
-  password: Joi.any().required(),
+  password: Joi.string().min(4).required(),
 });
 
 exports.validateSignup = validator(signupSchema);
