@@ -13,7 +13,10 @@
     "mongoose": "^5.9.23"
   },
   "scripts": {
-    "test": "echo \"Error: no test specified\" && exit 1"
+    "test": "echo \"Error: no test specified\" && exit 1",
+    "server": "echo server",
+    "client": "echo client",
+    "start": "server"
   },
   "repository": {
     "type": "git",

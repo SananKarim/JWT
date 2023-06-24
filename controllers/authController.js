@@ -1,3 +1,4 @@
+const { object } = require("joi");
 const User = require("../models/User");
 const { validateSignup } = require("../rules/rules");
 const jwt = require("jsonwebtoken");
@@ -30,8 +31,12 @@ module.exports.signup_post = async (req, res) => {
       });
     } else {
       const { email, password } = value;
-      try {
+    if(email)      
+    try {
+        
+
         const user = await User.create({ email, password });
+        console.log("testing point");
         const token = createToken(user._id);
         res.cookie("jwt", token, { httpOnly: true, maxAge: maxAge * 1000 });
         res.status(201).json({ user: user._id });
@@ -51,8 +56,21 @@ module.exports.signup_post = async (req, res) => {
 
 module.exports.login_post = async (req, res) => {
   // console.log(req.body); //app.use(express.json()); in app.js
-  const { email, password } = req.body;
-  console.log(email);
-  console.log(password);
-  res.send("user login");
+  const { error, value } = validateSignup(req.body);
+  const { email, password } = value;
+  if (error) {
+    const errorMessages = error.details.map((detail) => detail.message);
+    return res.status(422).json({
+      error: errorMessages,
+    });
+  }
+
+  try {
+    const user = await User.login(email, password);
+
+    res.status(200).json({ user: user._id });
+  } catch (error) {
+    console.log(error.message);
+    res.status(401).json(error.message);
+  }
 };

@@ -1,14 +1,14 @@
 <%- include('partials/header'); -%>
 
-<form action="/signup">
-  <h2>Sign up</h2>
+<form action="/login">
+  <h2>signup</h2>
   <label for="email">Email</label>
   <input type="text" name="email" required />
   <div class="email error"></div>
   <label for="password">Password</label>
   <input type="password" name="password" required />
   <div class="password error"></div>
-  <button>Sign up</button>
+  <button>Login</button>
 </form>
 
 <%- include('partials/footer'); -%>
@@ -32,37 +32,38 @@
         headers: { "Content-Type": "application/json" },
       });
       const data = await result.json();
-
       switch (result.status) {
-        case 403:
-          emailError.textContent = data;
-          break;
         case 201:
-          console.log("User is registered");
+          location.assign("/");
+          break;
+        case 401:
+          console.log("testing");
+          emailError.textContent = data;
           break;
         case 422:
           for (let x = 0; x <= data.error.length; x++) {
             if (data.error[x] === '"email" must be a valid email') {
-              emailError.textContent = "enter a valid email.";
+              emailError.textContent = "Enter a valid email.";
             }
             if (
               data.error[x] ===
               '"password" length must be at least 4 characters long'
             ) {
               passwordError.textContent =
-                "password length must be at least 4 characters long";
+                "Password length must be at least 4 characters long.";
             }
           }
           break;
+        case 500:
+          console.log("try again");
         default:
-          console.log("am is else");
+          console.log("Something went wrong");
           break;
       }
       if (data.user) {
-        location.assign("/");
       }
     } catch (error) {
-      console.log("i am here in try catch");
+      console.log("An error occurred during login");
       console.log(error);
     }
   });

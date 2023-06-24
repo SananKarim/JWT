@@ -4,7 +4,7 @@
   <h2>Login</h2>
   <label for="email">Email</label>
   <input type="text" name="email" required />
-  <div class="email error">some error</div>
+  <div class="email error"></div>
   <label for="password">Password</label>
   <input type="password" name="password" required />
   <div class="password error"></div>
@@ -15,14 +15,53 @@
 
 <script>
   const form = document.querySelector("form");
+  const emailError = document.querySelector(".email.error");
+  const passwordError = document.querySelector(".password.error");
 
-  form.addEventListener("submit", (e) => {
+  form.addEventListener("submit", async (e) => {
     e.preventDefault();
-
+    emailError.textContent = "";
+    passwordError.textContent = "";
     // get values
     const email = form.email.value;
     const password = form.password.value;
-
-    console.log(email, password);
+    try {
+      const result = await fetch("/login", {
+        method: "POST",
+        body: JSON.stringify({ email, password }),
+        headers: { "Content-Type": "application/json" },
+      });
+      const data = await result.json();
+      switch (result.status) {
+        case 403:
+          emailError.textContent = data;
+          break;
+        case 201:
+          location.assign("/");
+          break;
+        case 422:
+          for (let x = 0; x <= data.error.length; x++) {
+            if (data.error[x] === '"email" must be a valid email') {
+              emailError.textContent = "enter a valid email.";
+            }
+            if (
+              data.error[x] ===
+              '"password" length must be at least 4 characters long'
+            ) {
+              passwordError.textContent =
+                "password length must be at least 4 characters long";
+            }
+          }
+          break;
+        case 401:
+          passwordError.textContent = "Invalid credentials. Try Agian";
+          break;
+        default:
+          console.log(data);
+      }
+    } catch (error) {
+      console.log("i am here in try catch");
+      console.log(error);
+    }
   });
 </script>

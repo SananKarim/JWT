@@ -23,8 +23,13 @@ mongoose
     useUnifiedTopology: true,
     useCreateIndex: true,
   })
-  .then((result) => app.listen(3001))
-  .catch((err) => console.log(err));
+  .then((result) => {
+    console.log("Database connected successfully.");
+    app.listen(3001);
+  })
+  .catch((err) => {
+    console.log("Failed to connect to the database:", err);
+  });
 
 // routes
 app.get("/", (req, res) => res.render("home"));
@@ -47,8 +52,5 @@ app.get("/smoothies", (req, res) => res.render("smoothies"));
 
 //   res.json(cookies);
 // });
-
-
-
 
 app.use(authRoutes);
