@@ -56,6 +56,10 @@
           break;
         case 500:
           console.log("try again");
+          break;
+        case 403:
+          emailError.textContent = "User Already Exsists";
+          break;
         default:
           console.log("Something went wrong");
           break;

@@ -31,18 +31,14 @@ module.exports.signup_post = async (req, res) => {
       });
     } else {
       const { email, password } = value;
-    if(email)      
-    try {
-        
-
+      try {
         const user = await User.create({ email, password });
-        console.log("testing point");
         const token = createToken(user._id);
         res.cookie("jwt", token, { httpOnly: true, maxAge: maxAge * 1000 });
         res.status(201).json({ user: user._id });
       } catch (error) {
+        console.log(error);
         let errors;
-
         if (error.code === 11000) {
           errors = "email already exsists";
           res.status(403).json(errors);
@@ -67,10 +63,16 @@ module.exports.login_post = async (req, res) => {
 
   try {
     const user = await User.login(email, password);
-
-    res.status(200).json({ user: user._id });
+    const token = createToken(user._id);
+    res.cookie("jwt", token, { httpOnly: true, maxAge: maxAge * 1000 });
+    res.status(201).json({ user: user._id });
   } catch (error) {
     console.log(error.message);
     res.status(401).json(error.message);
   }
+};
+
+module.exports.logout_get = (req, res) => {
+  res.cookie("jwt", "", { maxAge: 1 });
+  res.redirect("/");
 };
