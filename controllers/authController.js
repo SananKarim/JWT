@@ -10,7 +10,7 @@ const jwt = require("jsonwebtoken");
 const maxAge = 3 * 24 * 60 * 60; //3days
 
 const createToken = (id) => {
-  return jwt.sign({ id }, "sanan karim secret code", { expiresIn: maxAge });
+  return jwt.sign({ id },"sanan karim secret code", { expiresIn: maxAge });
 };
 
 module.exports.signup_get = (req, res) => {
